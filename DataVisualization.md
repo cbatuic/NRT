@@ -3,13 +3,13 @@ This setup will allow you to create a Tableau dashboard that visualizes live tem
 
 To display live temperature data from PostgreSQL in Tableau:
 
-- [/] Install PostgreSQL ODBC driver (if not already installed).
-- [/] Connect Tableau to PostgreSQL by providing server, database, and authentication details.
-- [/] Set the connection to Live (rather than extract) to ensure real-time data fetching.
-- [/] Create visualizations (like time series charts) to represent temperature data over time.
-- [/] Build a dashboard by arranging the visualizations on the canvas.
-- [/] Optionally, set up auto-refresh to keep the dashboard updated at regular intervals.
-- [/] Publish the dashboard to Tableau Server or Tableau Online if sharing with others.
+- [x] Install PostgreSQL ODBC driver (if not already installed).
+- [x] Connect Tableau to PostgreSQL by providing server, database, and authentication details.
+- [x] Set the connection to Live (rather than extract) to ensure real-time data fetching.
+- [x] Create visualizations (like time series charts) to represent temperature data over time.
+- [x] Build a dashboard by arranging the visualizations on the canvas.
+- [x] Optionally, set up auto-refresh to keep the dashboard updated at regular intervals.
+- [x] Publish the dashboard to Tableau Server or Tableau Online if sharing with others.
 
 # Tableau Setup to Display Live Temperature Data from PostgreSQL
 
