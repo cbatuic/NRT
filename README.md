@@ -76,3 +76,87 @@ if __name__ == "__main__":
 ```
 4. Run consumer script.
 5. Run producer script.
+6. Modify consumer script and include data persistence.
+```python
+#CREATE TABLE temperature_data (
+#    id SERIAL PRIMARY KEY,
+#    timestamp TIMESTAMP NOT NULL,
+#    temperature FLOAT NOT NULL
+#);
+
+from kafka import KafkaConsumer
+import psycopg2
+import json
+from psycopg2 import sql
+
+# Configuration
+KAFKA_TOPIC = "temperature-topic"  # Kafka topic
+KAFKA_SERVER = "localhost:9092"    # Kafka server address
+DB_NAME = "temperature_db"         # PostgreSQL database name
+DB_USER = "your_user"              # PostgreSQL username
+DB_PASSWORD = "your_password"      # PostgreSQL password
+DB_HOST = "localhost"              # PostgreSQL host
+DB_PORT = "5432"                  # PostgreSQL port (default)
+
+# Kafka consumer setup
+consumer = KafkaConsumer(
+    KAFKA_TOPIC,  # Topic to consume from
+    bootstrap_servers=[KAFKA_SERVER],  # Kafka server(s)
+    group_id='temperature-consumer-group',  # Consumer group ID
+    value_deserializer=lambda x: json.loads(x.decode('utf-8'))  # Deserialize JSON messages
+)
+
+# PostgreSQL connection function
+def connect_to_db():
+    try:
+        conn = psycopg2.connect(
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
+            port=DB_PORT
+        )
+        return conn
+    except Exception as e:
+        print(f"Error connecting to database: {e}")
+        return None
+
+# Function to save data to PostgreSQL
+def save_temperature_to_db(timestamp, temperature):
+    try:
+        # Connect to the database
+        conn = connect_to_db()
+        if conn:
+            cursor = conn.cursor()
+            
+            # Insert the data into the database
+            cursor.execute(
+                sql.SQL("INSERT INTO temperature_data (timestamp, temperature) VALUES (%s, %s)"),
+                [timestamp, temperature]
+            )
+            
+            # Commit the transaction
+            conn.commit()
+            cursor.close()
+            conn.close()
+            print(f"Saved temperature data to DB: {timestamp}, {temperature}°C")
+        else:
+            print("Database connection failed.")
+    except Exception as e:
+        print(f"Error saving data to DB: {e}")
+
+# Function to process each message from Kafka and save it to the database
+def process_messages():
+    for message in consumer:
+        # Extract the temperature data from the Kafka message
+        data = message.value
+        timestamp = data['timestamp']
+        temperature = data['temperature']
+        
+        # Save the temperature data to the database
+        save_temperature_to_db(timestamp, temperature)
+
+if __name__ == "__main__":
+    print("Kafka consumer started. Waiting for messages...")
+    process_messages()
+```
