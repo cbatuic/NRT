@@ -30,25 +30,25 @@
    ```
 4. Create consumer script.
    
-```python
-from kafka import KafkaConsumer
-
-def consume_messages():
-   # Kafka consumer setup
-   consumer = KafkaConsumer(
-       'test-topic',  # The topic to consume from
-       bootstrap_servers='localhost:9092',  # Replace with your Kafka broker address
-       group_id='test-group',  # Consumer group ID
-       value_deserializer=lambda x: x.decode('utf-8')  # Deserialize bytes to string
-   )
-
-   # Poll for messages and print them
-   print("Listening for messages...")
-   for message in consumer:
-       print(f"Received message: {message.value}")
-
-if __name__ == "__main__":
-   consume_messages()
-```
+   ```python
+   from kafka import KafkaConsumer
+   
+   def consume_messages():
+      # Kafka consumer setup
+      consumer = KafkaConsumer(
+          'test-topic',  # The topic to consume from
+          bootstrap_servers='localhost:9092',  # Replace with your Kafka broker address
+          group_id='test-group',  # Consumer group ID
+          value_deserializer=lambda x: x.decode('utf-8')  # Deserialize bytes to string
+      )
+   
+      # Poll for messages and print them
+      print("Listening for messages...")
+      for message in consumer:
+          print(f"Received message: {message.value}")
+   
+   if __name__ == "__main__":
+      consume_messages()
+   ```
 5. Run consumer script to start listening. ```>python consumer.py```
 6. Run producer script to send message. ```>python producer.py```
